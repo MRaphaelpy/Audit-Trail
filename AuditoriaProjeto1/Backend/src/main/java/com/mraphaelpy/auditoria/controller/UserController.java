@@ -1,0 +1,66 @@
+package com.mraphaelpy.auditoria.controller;
+
+import com.mraphaelpy.auditoria.dto.request.UserRegistrationRequest;
+import com.mraphaelpy.auditoria.dto.response.ApiResponse;
+import com.mraphaelpy.auditoria.entity.User;
+import com.mraphaelpy.auditoria.service.UserService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/users")
+@RequiredArgsConstructor
+@Slf4j
+@CrossOrigin(origins = "*")
+public class UserController {
+    
+    private final UserService userService;
+    
+    @PostMapping("/register")
+    public ResponseEntity<ApiResponse> registerUser(@Valid @RequestBody UserRegistrationRequest request) {
+        try {
+            User user = userService.registerUser(request);
+            
+            Map<String, Object> userData = new HashMap<>();
+            userData.put("id", user.getId());
+            userData.put("username", user.getUsername());
+            userData.put("email", user.getEmail());
+            userData.put("createdAt", user.getCreatedAt());
+            
+            return ResponseEntity.ok(ApiResponse.success("Usuário registrado com sucesso", userData));
+            
+        } catch (RuntimeException e) {
+            log.warn("Erro ao registrar usuário: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
+        } catch (Exception e) {
+            log.error("Erro interno ao registrar usuário", e);
+            return ResponseEntity.internalServerError().body(ApiResponse.error("Erro interno do servidor"));
+        }
+    }
+    
+    @GetMapping("/check-username/{username}")
+    public ResponseEntity<ApiResponse> checkUsername(@PathVariable String username) {
+        boolean exists = userService.existsByUsername(username);
+        Map<String, Object> data = new HashMap<>();
+        data.put("exists", exists);
+        data.put("available", !exists);
+        
+        return ResponseEntity.ok(ApiResponse.success("Verificação realizada", data));
+    }
+    
+    @GetMapping("/check-email/{email}")
+    public ResponseEntity<ApiResponse> checkEmail(@PathVariable String email) {
+        boolean exists = userService.existsByEmail(email);
+        Map<String, Object> data = new HashMap<>();
+        data.put("exists", exists);
+        data.put("available", !exists);
+        
+        return ResponseEntity.ok(ApiResponse.success("Verificação realizada", data));
+    }
+}
