@@ -49,7 +49,8 @@ public class DatabaseLogAppender extends AppenderBase<ILoggingEvent> {
                 .level(event.getLevel().toString())
                 .loggerName(event.getLoggerName())
                 .threadName(event.getThreadName())
-                .message(event.getFormattedMessage());
+                .message(event.getFormattedMessage())
+                .mdcData("{}");
 
         
         if (event.getThrowableProxy() != null) {
@@ -75,6 +76,7 @@ public class DatabaseLogAppender extends AppenderBase<ILoggingEvent> {
                         .httpMethod(mdcPropertyMap.get("httpMethod"));
             } catch (Exception e) {
                 System.err.println("Erro ao serializar MDC: " + e.getMessage());
+                builder.mdcData("{}");
             }
         }
 

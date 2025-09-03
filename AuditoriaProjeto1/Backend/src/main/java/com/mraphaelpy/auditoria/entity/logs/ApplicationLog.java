@@ -51,7 +51,7 @@ public class ApplicationLog {
     @Column(name = "stack_trace", columnDefinition = "LONGTEXT")
     private String stackTrace;
 
-    @Column(name = "mdc_data", nullable = false, columnDefinition = "JSON")
+    @Column(name = "mdc_data", columnDefinition = "JSON", nullable = false)
     private String mdcData;
 
     @Column(name = "request_id", length = 100)

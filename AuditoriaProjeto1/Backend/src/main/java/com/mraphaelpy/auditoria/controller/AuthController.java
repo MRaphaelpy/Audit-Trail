@@ -81,56 +81,6 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.success("Logout realizado com sucesso"));
     }
 
-    @GetMapping("/health")
-    public ResponseEntity<ApiResponse> health() {
-        return ResponseEntity.ok(ApiResponse.success("Auth controller está funcionando"));
-    }
-
-    @PostMapping("/test")
-    public ResponseEntity<ApiResponse> test() {
-        return ResponseEntity.ok(ApiResponse.success("Endpoint de teste funcionando"));
-    }
-
-    @GetMapping("/config")
-    public ResponseEntity<Map<String, Object>> getAuthConfig() {
-        Map<String, Object> config = new HashMap<>();
-        config.put("twoFactorEnabled", appConfig.isTwoFactorEnabled());
-        config.put("twoFactorCodeExpiryMinutes", appConfig.getTwoFactorCodeExpiryMinutes());
-        config.put("accountLockEnabled", appConfig.isAccountLockEnabled());
-        config.put("accountLockMaxAttempts", appConfig.getAccountLockMaxAttempts());
-        config.put("accountLockDurationMinutes", appConfig.getAccountLockDurationMinutes());
-        config.put("infiniteAttemptsEnabled", appConfig.isInfiniteAttemptsEnabled());
-
-        return ResponseEntity.ok(config);
-    }
-
-    @PostMapping("/config/two-factor")
-    public ResponseEntity<ApiResponse> toggleTwoFactor(@RequestParam boolean enabled) {
-        try {
-            appConfig.setTwoFactorEnabled(enabled);
-            String message = enabled ? "2FA ativado com sucesso" : "2FA desativado com sucesso";
-            log.info("Configuração 2FA alterada para: {}", enabled);
-            return ResponseEntity.ok(ApiResponse.success(message));
-        } catch (Exception e) {
-            log.error("Erro ao alterar configuração 2FA", e);
-            return ResponseEntity.internalServerError()
-                    .body(ApiResponse.error("Erro ao alterar configuração"));
-        }
-    }
-
-    @PostMapping("/config/infinite-attempts")
-    public ResponseEntity<ApiResponse> toggleInfiniteAttempts(@RequestParam boolean enabled) {
-        try {
-            appConfig.setInfiniteAttemptsEnabled(enabled);
-            String message = enabled ? "Tentativas infinitas ativadas" : "Tentativas infinitas desativadas";
-            log.info("Configuração de tentativas infinitas alterada para: {}", enabled);
-            return ResponseEntity.ok(ApiResponse.success(message));
-        } catch (Exception e) {
-            log.error("Erro ao alterar configuração de tentativas infinitas", e);
-            return ResponseEntity.internalServerError()
-                    .body(ApiResponse.error("Erro ao alterar configuração"));
-        }
-    }
 
     private String getClientIpAddress(HttpServletRequest request) {
         String xForwardedFor = request.getHeader("X-Forwarded-For");

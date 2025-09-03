@@ -67,9 +67,15 @@ public class HttpRequestLoggingInterceptor implements HandlerInterceptor {
     }
 
     private void saveHttpRequestLog(HttpServletRequest request, HttpServletResponse response,
-            Long processingTime, Exception exception) {
+                                    Long processingTime, Exception exception) {
         try {
             String requestId = (String) request.getAttribute("requestId");
+
+            // Obtenha o userId e aplique um valor padrão se for null
+            String userId = getCurrentUserId(request);
+            if (userId == null) {
+                userId = "anonymous";
+            }
 
             HttpRequestLog httpLog = HttpRequestLog.builder()
                     .requestId(requestId)
@@ -82,7 +88,7 @@ public class HttpRequestLoggingInterceptor implements HandlerInterceptor {
                     .responseBody(getResponseBody(response))
                     .responseHeaders(getResponseHeaders(response))
                     .processingTimeMs(processingTime)
-                    .userId(getCurrentUserId(request))
+                    .userId(userId) // Usando o valor verificado
                     .sessionId(request.getSession(false) != null ? request.getSession().getId() : null)
                     .ipAddress(getClientIpAddress(request))
                     .userAgent(request.getHeader("User-Agent"))
