@@ -33,7 +33,7 @@ public class AuthController {
             String ipAddress = getClientIpAddress(httpRequest);
             String userAgent = httpRequest.getHeader("User-Agent");
 
-            LoginResponse response = authService.authenticate(request, ipAddress, userAgent, httpRequest);
+            LoginResponse response = authService.authenticate(request, ipAddress, userAgent);
 
             if (response.getSuccess()) {
                 return ResponseEntity.ok(response);

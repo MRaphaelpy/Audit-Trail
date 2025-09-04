@@ -45,13 +45,13 @@ public class AuthService {
     private final StructuredLoggingService structuredLoggingService;
     private final SecureRandom secureRandom = new SecureRandom();
 
-    public LoginResponse authenticate(LoginRequest request, String ipAddress, String userAgent, HttpServletRequest httpRequest) {
+    public LoginResponse authenticate(LoginRequest request, String ipAddress, String userAgent) {
         log.info("Tentativa de login para email: {} de IP: {}", request.getEmail(), ipAddress);
 
         structuredLoggingService.logInfo("auth", "Tentativa de autenticação iniciada",
                 Map.of("email", request.getEmail(), "ip_address", ipAddress, "user_agent", userAgent));
 
-        //HttpServletRequest httpRequest = getCurrentHttpRequest();
+        HttpServletRequest httpRequest = getCurrentHttpRequest();
 
         Optional<User> userOpt = userRepository.findByEmail(request.getEmail());
 
