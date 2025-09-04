@@ -8,14 +8,18 @@ services:
       - 'MYSQL_ROOT_PASSWORD=root123'
       - 'MYSQL_USER=auditoria_user'
     ports:
-      - '3307:3306'
+      - '3307:3306'  # Mantendo o mapeamento para 3307 conforme seu .env
     volumes:
       - mysql_data:/var/lib/mysql
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot123"]
+      interval: 5s
       timeout: 20s
       retries: 10
+    networks:
+      - app-network
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
   mailhog:
     image: 'mailhog/mailhog:latest'
@@ -24,6 +28,19 @@ services:
       - '1026:1025'  # SMTP server
       - '8026:8025'  # Web UI
     restart: unless-stopped
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "1025"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
 
 volumes:
   mysql_data:
+    name: auditoria-mysql-data
+
+networks:
+  app-network:
+    name: auditoria-network
+    driver: bridge

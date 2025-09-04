@@ -71,7 +71,7 @@ public class HttpRequestLoggingInterceptor implements HandlerInterceptor {
         try {
             String requestId = (String) request.getAttribute("requestId");
 
-            // Obtenha o userId e aplique um valor padrão se for null
+            
             String userId = getCurrentUserId(request);
             if (userId == null) {
                 userId = "anonymous";
@@ -88,7 +88,7 @@ public class HttpRequestLoggingInterceptor implements HandlerInterceptor {
                     .responseBody(getResponseBody(response))
                     .responseHeaders(getResponseHeaders(response))
                     .processingTimeMs(processingTime)
-                    .userId(userId) // Usando o valor verificado
+                    .userId(userId) 
                     .sessionId(request.getSession(false) != null ? request.getSession().getId() : null)
                     .ipAddress(getClientIpAddress(request))
                     .userAgent(request.getHeader("User-Agent"))

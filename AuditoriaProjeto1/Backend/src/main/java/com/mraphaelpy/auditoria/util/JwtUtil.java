@@ -28,22 +28,19 @@ public class JwtUtil {
         byte[] keyBytes;
 
         try {
-            // Tenta decodificar como Base64
+
             keyBytes = Base64.getDecoder().decode(secret);
         } catch (IllegalArgumentException e) {
-            // Se não for Base64 válido, usa os bytes brutos
+
             keyBytes = secret.getBytes();
         }
 
-        // Verifica se a chave tem o tamanho adequado (32 bytes/256 bits)
         if (keyBytes.length < 32) {
             log.warn("JWT secret key is too short! Creating a stronger key by extending the current one.");
             byte[] strongKey = new byte[32];
 
-            // Copia os bytes da chave original
             System.arraycopy(keyBytes, 0, strongKey, 0, Math.min(keyBytes.length, 32));
 
-            // Preenche o resto copiando os bytes iniciais
             for (int i = keyBytes.length; i < 32; i++) {
                 strongKey[i] = keyBytes[i % keyBytes.length];
             }

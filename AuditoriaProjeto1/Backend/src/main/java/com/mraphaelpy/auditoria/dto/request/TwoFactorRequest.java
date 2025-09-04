@@ -15,5 +15,5 @@ public class TwoFactorRequest {
     private String code;
     
     @NotBlank(message = "Token de sessão é obrigatório")
-    private String session_token;
+    private String sessionToken;
 }

@@ -18,4 +18,6 @@ public class LoginResponse {
     private Boolean requiresTwoFactor;
     private String username;
     private String captchaImage;
+    private Boolean captchaEnabled;
+    private Boolean twoFactorEnabled;
 }
