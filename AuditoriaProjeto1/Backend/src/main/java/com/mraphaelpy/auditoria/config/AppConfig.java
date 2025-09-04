@@ -23,7 +23,7 @@ public class AppConfig {
     @Value("${app.account-lock.enabled:true}")
     private boolean accountLockEnabled;
 
-    @Value("${app.account-lock.max-attempts:5}")
+    @Value("${app.account-lock.max-attempts:3}")
     private int accountLockMaxAttempts;
 
     @Value("${app.account-lock.duration-minutes:30}")
@@ -31,6 +31,9 @@ public class AppConfig {
 
     @Value("${app.infinite-attempts.enabled:false}")
     private boolean infiniteAttemptsEnabled;
+
+    @Value("${app.active-captcha:false}")
+    private boolean activeCaptcha;
 
     public AppConfig(Environment environment) {
         this.environment = environment;
@@ -73,6 +76,10 @@ public class AppConfig {
         String infiniteAttemptsEnabledEnv = System.getProperty("INFINITE_ATTEMPTS_ENABLED");
         if (infiniteAttemptsEnabledEnv != null) {
             this.infiniteAttemptsEnabled = Boolean.parseBoolean(infiniteAttemptsEnabledEnv);
+        }
+        String activeCaptchaEnv = System.getProperty("ACTIVE_CAPTCHA");
+        if (activeCaptchaEnv != null) {
+            this.activeCaptcha = Boolean.parseBoolean(activeCaptchaEnv);
         }
     }
 }
