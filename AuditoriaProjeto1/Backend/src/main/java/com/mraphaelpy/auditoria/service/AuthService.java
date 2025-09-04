@@ -74,6 +74,31 @@ public class AuthService {
                 recordLoginAttempt(request.getEmail(), ipAddress, userAgent, false, "Conta bloqueada", false);
                 auditoriaService.contaBloqueada(request.getEmail(), ipAddress, userAgent, user.getFailedAttempts());
                 log.warn("Tentativa de login em conta bloqueada: {}", request.getEmail());
+                boolean activeCaptcha = appConfig.isActiveCaptcha();
+                if (activeCaptcha) {
+                    Captcha generator = new Captcha();
+                    Captcha.CaptchaData captcha;
+                    try {
+                        captcha = generator.generateCaptcha();
+                    } catch (Exception e) {
+                        log.error("Erro ao gerar captcha", e);
+                        return LoginResponse.builder()
+                                .success(false)
+                                .message("Erro interno ao gerar captcha")
+                                .requiresTwoFactor(false)
+                                .build();
+                    }
+
+                    // salvar o texto na sessão para comparar depois
+                    httpRequest.getSession().setAttribute("captcha", captcha.getText());
+
+                    return LoginResponse.builder()
+                            .success(false)
+                            .message("Responda o captcha para fazer login novamente.")
+                            .captchaImage(captcha.getImage())
+                            .requiresTwoFactor(false)
+                            .build();
+                }
                 return LoginResponse.builder()
                         .success(false)
                         .message("Conta temporariamente bloqueada. Tente novamente mais tarde.")
@@ -240,6 +265,7 @@ public class AuthService {
             recordLoginAttempt(email, ipAddress, userAgent, false, reason + " - Conta bloqueada", false);
             auditoriaService.contaBloqueada(email, ipAddress, userAgent, user.getFailedAttempts());
             log.warn("Conta bloqueada após {} tentativas inválidas: {}", user.getFailedAttempts(), email);
+
             return LoginResponse.builder()
                     .success(false)
                     .message("Muitas tentativas inválidas. Conta temporariamente bloqueada.")

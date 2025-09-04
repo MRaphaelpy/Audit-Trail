@@ -17,4 +17,5 @@ public class LoginResponse {
     private String sessionToken;
     private Boolean requiresTwoFactor;
     private String username;
+    private String captchaImage;
 }
